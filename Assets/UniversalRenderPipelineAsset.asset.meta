@@ -1,8 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Simple Water.meta
+guid: 5b3f734cbd4046e448a6c3403199a2ed
+folderAsset: yes
+DefaultImporter:
+=======
 guid: 505872ee1f5354246bd1d4e3fdd11b08
 NativeFormatImporter:
+>>>>>>> 218efc752ca8d129456f1b7c0c6547c654bdd51b:Assets/UniversalRenderPipelineAsset.asset.meta
   externalObjects: {}
-  mainObjectFileID: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
