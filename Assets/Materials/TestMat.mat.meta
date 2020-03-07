@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Materials/TestMat.mat.meta
 guid: 11904388e05d8c8419ebfdb2fbc2c0ed
+=======
+guid: c4337c73ea597084eaaa7c6ad48ee01d
+>>>>>>> 218efc752ca8d129456f1b7c0c6547c654bdd51b:Assets/Materials/Materials/TestWall.mat.meta
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 0
