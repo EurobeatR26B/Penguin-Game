@@ -48,9 +48,9 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movement = new Vector3(hAxis, 0f, vAxis);
 
         if(movement != Vector3.zero)
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.3f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(-movement), 0.3f);
 
         //if (isGrounded())
-        transform.Translate(-movement * Speed * Time.deltaTime, Space.World);
+        transform.Translate(movement * Speed * Time.deltaTime, Space.World);
     }
 }
