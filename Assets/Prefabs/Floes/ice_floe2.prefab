@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 6403597076384976301}
   - component: {fileID: 4769175480136029667}
   - component: {fileID: 5710059867418959965}
+  - component: {fileID: 2224431680952433234}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: ice_floe2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1435045220717956320}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -0.14447331, y: 0.22086583, z: 0.032510664}
-  m_LocalScale: {x: 201.42961, y: 216.90335, z: 18.814703}
+  m_LocalScale: {x: 350, y: 350, z: 35}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &4769175480136029667
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -58,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 670224309865224971, guid: eacd1edd328252642b030145c99764e1, type: 3}
+  - {fileID: 2100000, guid: 54613e9fb9abea947ac0d526367dd3d4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -79,3 +80,16 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &2224431680952433234
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435045220717956320}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.24544063, y: 0.23919305, z: 0.5017622}
+  m_Center: {x: 0.0031821115, y: -0.014266913, z: 0.0050335475}
