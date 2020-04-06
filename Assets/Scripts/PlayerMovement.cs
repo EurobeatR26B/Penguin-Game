@@ -6,6 +6,11 @@ public class PlayerMovement : MonoBehaviour
 {
     public int Speed = 2;
     public int Height = 2;
+    public int MaxJumpVelocity = 3;
+    public float FallVelocity = 1.5f;
+
+    public float JumpVelocity;
+    public float JumpDamp = 0.7f;
 
     public float distanceToGround = 0.7f;
     Rigidbody rb;
@@ -22,9 +27,33 @@ public class PlayerMovement : MonoBehaviour
         Move();
 
         if (Input.GetKey(KeyCode.Space) && isGrounded()) Jump();
+        if (Input.GetKey(KeyCode.R)) transform.position = new Vector3(0, 20, 0);
+
+
+        Vector3 pos = transform.position;
+
+        if (JumpVelocity > 0)
+        {
+            pos.y += JumpVelocity;
+
+            JumpVelocity -= JumpDamp;
+
+            if(JumpVelocity <= 0)
+            {
+                rb.useGravity = true;
+                JumpVelocity = 0;
+            }
+        }
+        if(!isGrounded())
+        {
+            rb.velocity += new Vector3(0, -FallVelocity, 0);
+        }
+
+        transform.position = pos;
+
     }
 
-    bool isGrounded ()
+    bool isGrounded()
     {
         return Physics.Raycast(transform.position, Vector3.down, distanceToGround);
     }
@@ -34,10 +63,18 @@ public class PlayerMovement : MonoBehaviour
         float hAxis = Input.GetAxis("Horizontal");
         float vAxis = Input.GetAxis("Vertical");
 
+        JumpVelocity = MaxJumpVelocity;
+        rb.useGravity = false;
+
+        /*
         Vector3 movement = new Vector3(hAxis, 0f, vAxis);
 
-        rb.velocity += -movement * 2;
-        rb.velocity += Vector3.up * Height;
+        Vector3 vel = rigidbody.velocity;
+        vel.y -= 9.8f * Time.deltaTime;
+        rigidbody.velocity = vel;
+
+        rb.velocity += -movement * 2f;
+        rb.velocity += Vector3.up * Height;*/
     }
 
     void Move()
@@ -47,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 movement = new Vector3(hAxis, 0f, vAxis);
 
-        if(movement != Vector3.zero)
+        if (movement != Vector3.zero)
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(-movement), 0.3f);
 
         //if (isGrounded())
