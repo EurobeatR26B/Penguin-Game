@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7129415002708993662
+--- !u!1 &6367437984651073172
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,10 +8,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3009722527898625843}
-  - component: {fileID: 3689865335781572477}
-  - component: {fileID: 4477912972667374275}
-  - component: {fileID: -7042304134912293982}
+  - component: {fileID: 7928295518053213319}
+  - component: {fileID: 1395535873263345329}
+  - component: {fileID: 4639122204316328520}
+  - component: {fileID: 6080837835087585174}
   m_Layer: 0
   m_Name: ice_floe3
   m_TagString: Untagged
@@ -19,35 +19,35 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3009722527898625843
+--- !u!4 &7928295518053213319
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7129415002708993662}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0.49802905, z: 0}
-  m_LocalScale: {x: 350, y: 350, z: 30}
+  m_GameObject: {fileID: 6367437984651073172}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+  m_LocalPosition: {x: 13.079338, y: 16.000029, z: -9.146382}
+  m_LocalScale: {x: 50, y: 50, z: 30}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!33 &3689865335781572477
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &1395535873263345329
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7129415002708993662}
+  m_GameObject: {fileID: 6367437984651073172}
   m_Mesh: {fileID: -5495902117074765545, guid: 0576d707c351a884dbbca7901550875c, type: 3}
---- !u!23 &4477912972667374275
+--- !u!23 &4639122204316328520
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7129415002708993662}
+  m_GameObject: {fileID: 6367437984651073172}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -80,16 +80,16 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &-7042304134912293982
+--- !u!65 &6080837835087585174
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7129415002708993662}
+  m_GameObject: {fileID: 6367437984651073172}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.2513519, y: 0.26860717, z: 0.42072526}
-  m_Center: {x: 0.0056681386, y: -0.0027109638, z: 0.047901325}
+  m_Size: {x: 2.2293024, y: 2.1908412, z: 0.9999998}
+  m_Center: {x: 0.010440767, y: -0.042691045, z: 0.4999999}

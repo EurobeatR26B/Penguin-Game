@@ -11,7 +11,7 @@ public class FloeSpawnerManager : MonoBehaviour
     private Transform playerTransform;
     private int maxFloes = 3;
 
-    public float spawnZ = 0f;
+    public float spawnZ = 60f;
     public float floeLength = 60f;
 
     // Start is called before the first frame update
@@ -34,35 +34,39 @@ public class FloeSpawnerManager : MonoBehaviour
 
     }
 
-    private void SpawnFloe (int index = -1)
+    private void SpawnFloe ()
     {
         GameObject ob = Instantiate(spawnList[Random.Range(0, 2)]) as GameObject;
         ob.transform.SetParent(transform);
 
-        //-------------------ROTATION
+        float SeaY = Sea.transform.position.y;
+        float obY = ob.GetComponent<Renderer>().bounds.size.y;
+
+        
+        //ROTATION
         //X - sideways, Y - axis (the one you need), Z - same as Y, ignore
+        // 5/10 chance to rotate the floe
         if (Random.Range(1, 10) >= 5)
         ob.transform.rotation = Quaternion.Euler(Random.Range(75, 105), Random.Range(0, 360), 0);
 
-        //-------------------HEIGHT
-        float height = Random.Range(15, 30);
-        float side = Random.Range(-80, 80);
+        //Y AND X POSITIONS
+        float height = Random.Range(10, 22);
+        float side = Random.Range(-40, 40);
 
-        if(ob.transform.position.y > Sea.transform.position.y)
-        {
-            ob.transform.localScale = new Vector3 (1f, 1f, 15f);
-        }
+        float obZscale = Random.Range(0.7f, 1.4f);
 
-        //-------------------SPAWN
-        if(side > 30 || side < -30)
-        {
-            GameObject ob2 = Instantiate(spawnList[Random.Range(0, 2)]) as GameObject;
-            ob2.transform.localScale = new Vector3(Random.Range(0.5f, 1f), Random.Range(0.5f, 1f), 1f);
-            ob2.transform.position = (Vector3.forward * spawnZ) + (Vector3.up * Random.Range(15, 30) + (-Vector3.right * side));
-        }
+        float posY = 5;
+        if (obZscale > 1.2) posY = -0.5f;
 
-        ob.transform.localScale = new Vector3(Random.Range(0.5f, 1f), Random.Range(0.5f, 1f), 1f);
-        ob.transform.position = (Vector3.forward * spawnZ) + (Vector3.up * height) + (Vector3.right * side);
+        Vector3 newScale = new Vector3(Random.Range(0.8f, 1.2f), Random.Range(0.7f, 1.4f), obZscale);
+        Vector3 newPos = new Vector3(side, posY, spawnZ);
+
+        ob.transform.localScale = newScale;
+        ob.transform.position = newPos;
+        
+
+
+
         spawnZ += floeLength * 2f;
     }
 }

@@ -7,7 +7,7 @@ public class SeaSpawner : MonoBehaviour
     private GameObject Sea;
     private Transform playerTransform;
 
-    public int SpawnZ = 0;
+    public int SpawnZ = 150;
     public int SeaSize = 150;
     // Start is called before the first frame update
     void Start()
@@ -28,7 +28,7 @@ public class SeaSpawner : MonoBehaviour
         GameObject ob = Instantiate(GameObject.FindGameObjectWithTag("Sea"));
         ob.transform.SetParent(transform);
 
-        ob.transform.position = (Vector3.forward * SpawnZ) + (-Vector3.up * 1f);
+        ob.transform.position = (Vector3.forward * SpawnZ) + (Vector3.up * Sea.transform.position.y);
         SpawnZ += 150;
         Debug.Log("Spawned");
     }
