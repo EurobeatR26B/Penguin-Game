@@ -12,7 +12,7 @@ public class FloeSpawnerManager : MonoBehaviour
     private int maxFloes = 3;
 
     public float spawnZ = 60f;
-    public float floeLength = 60f;
+    public float floeLength = 50f;
 
     // Start is called before the first frame update
     void Start()
@@ -30,43 +30,58 @@ public class FloeSpawnerManager : MonoBehaviour
     void Update()
     {
         Random.seed = Time.frameCount;
-        if (playerTransform.position.z > (spawnZ - (maxFloes * floeLength * 4))) SpawnFloe();
+        if (playerTransform.position.z > (spawnZ - (maxFloes * floeLength * 4f))) SpawnFloe();
 
     }
 
-    private void SpawnFloe ()
+    private void SpawnFloe()
     {
-        GameObject ob = Instantiate(spawnList[Random.Range(0, 2)]) as GameObject;
-        ob.transform.SetParent(transform);
+        float seaSizeY = Sea.GetComponent<Renderer>().bounds.size.y / 2;
 
-        float SeaY = Sea.transform.position.y;
-        float obY = ob.GetComponent<Renderer>().bounds.size.y;
+        GameObject ob = Instantiate(spawnList[Random.Range(0, 3)]) as GameObject;
+        //ob.transform.SetParent(transform);
 
-        
+
         //ROTATION
         //X - sideways, Y - axis (the one you need), Z - same as Y, ignore
         // 5/10 chance to rotate the floe
-        if (Random.Range(1, 10) >= 5)
-        ob.transform.rotation = Quaternion.Euler(Random.Range(75, 105), Random.Range(0, 360), 0);
+        if (Random.Range(1, 10) >= 6)
+            ob.transform.rotation = Quaternion.Euler(Random.Range(-15, 15), Random.Range(0, 360), 0);
 
         //Y AND X POSITIONS
-        float height = Random.Range(10, 22);
+        float height = Random.Range(1, 35);
         float side = Random.Range(-40, 40);
 
-        float obZscale = Random.Range(0.7f, 1.4f);
 
-        float posY = 5;
-        if (obZscale > 1.2) posY = -0.5f;
+        float obSizeY = ob.GetComponent<Renderer>().bounds.size.y / 2;
+        float newScaleY = 1f;
 
-        Vector3 newScale = new Vector3(Random.Range(0.8f, 1.2f), Random.Range(0.7f, 1.4f), obZscale);
-        Vector3 newPos = new Vector3(side, posY, spawnZ);
+        float seaTop = Sea.transform.position.y + seaSizeY;
+        float heightDifference = (height - obSizeY) - seaTop;
+        
+        if (height - obSizeY > seaTop)
+        {
+            newScaleY = heightDifference / obSizeY;
+            if (newScaleY < 1) newScaleY = 1;
+
+            height = (seaTop) - (obSizeY * newScaleY);
+        }
+
+        Vector3 defaultScale = ob.transform.localScale;
+
+        float xzScale = Random.Range(0.8f, 1.2f);
+
+        Vector3 newScale = new Vector3(xzScale * defaultScale.x, defaultScale.y * newScaleY, xzScale * defaultScale.x);
+        Vector3 newPos = new Vector3(side, height, spawnZ);
 
         ob.transform.localScale = newScale;
+
+        obSizeY = ob.GetComponent<Renderer>().bounds.size.y / 2;
+        //if (height - obSizeY > seaTop) ob.transform.position = new Vector3(side, height + obSizeY, spawnZ);
         ob.transform.position = newPos;
-        
-
-
 
         spawnZ += floeLength * 2f;
+
+        Debug.Log("Floe height:" + height + " --- " + obSizeY);
     }
 }
