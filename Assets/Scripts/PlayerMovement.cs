@@ -5,8 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public int Speed = 2;
-    public int Height = 2;
-    public int MaxJumpVelocity = 3;
+    public float MaxJumpVelocity = 3;
     public float FallVelocity = 1.5f;
 
     public float JumpVelocity;
@@ -65,16 +64,6 @@ public class PlayerMovement : MonoBehaviour
 
         JumpVelocity = MaxJumpVelocity;
         rb.useGravity = false;
-
-        /*
-        Vector3 movement = new Vector3(hAxis, 0f, vAxis);
-
-        Vector3 vel = rigidbody.velocity;
-        vel.y -= 9.8f * Time.deltaTime;
-        rigidbody.velocity = vel;
-
-        rb.velocity += -movement * 2f;
-        rb.velocity += Vector3.up * Height;*/
     }
 
     void Move()
@@ -85,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movement = new Vector3(hAxis, 0f, vAxis);
 
         if (movement != Vector3.zero)
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(-movement), 0.3f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.3f);
 
         //if (isGrounded())
         transform.Translate(movement * Speed * Time.deltaTime, Space.World);
