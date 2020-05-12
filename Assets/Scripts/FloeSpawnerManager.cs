@@ -10,10 +10,13 @@ public class FloeSpawnerManager : MonoBehaviour
     GameObject Sea;
 
     private Transform playerTransform;
-    private int maxFloes = 3;
+    private int maxFloes = 4;
 
     public float spawnZ = 60f;
     public float floeLength = 50f;
+
+    private float seaSizeY;
+    private float seaTop;
 
     // Start is called before the first frame update
     void Start()
@@ -21,27 +24,28 @@ public class FloeSpawnerManager : MonoBehaviour
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         Sea = GameObject.FindGameObjectWithTag("Sea");
 
-
-        SpawnFloe();
-        SpawnFloe();
-        SpawnFloe();
+        seaSizeY = Sea.GetComponent<Renderer>().bounds.size.y / 2;
+        seaTop = Sea.transform.position.y + seaSizeY;
     }
 
     // Update is called once per frame
     void Update()
     {
-        UnityEngine.Random.seed = Time.frameCount;
-        if (playerTransform.position.z > (spawnZ - (maxFloes * floeLength * 4f))) SpawnFloe();
+        //UnityEngine.Random.seed = Time.frameCount;
+        //if (playerTransform.position.z > (spawnZ - (maxFloes * floeLength * 4f))) SpawnFloeBurst();
+
+        if (playerTransform.position.z > (spawnZ - (maxFloes * floeLength * 4f)))
+        {
+            if (UnityEngine.Random.Range(1, 15) > 13) SpawnFloeBurst();
+            else SpawnFloeNormal();
+        }
 
     }
 
-    private void SpawnFloe()
+    private void SpawnFloeNormal()
     {
         GameObject ob = Instantiate(spawnList[UnityEngine.Random.Range(0, 3)]) as GameObject;
 
-        float seaSizeY = Sea.GetComponent<Renderer>().bounds.size.y / 2;
-        float seaTop = Sea.transform.position.y + seaSizeY;
-        
         float side = UnityEngine.Random.Range(-40, 40);
         float xzScale = UnityEngine.Random.Range(1f, 1.3f);
         Vector3 defaultScale = ob.transform.localScale;
@@ -50,7 +54,10 @@ public class FloeSpawnerManager : MonoBehaviour
         //X - sideways, Y - axis (the one you need), Z - same as Y, ignore
         // 5/10 chance to rotate the floe
         if (UnityEngine.Random.Range(1, 10) >= 6)
+        {
             ob.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(-15, 15), UnityEngine.Random.Range(0, 360), 0);
+            ob.GetComponent<PlatformScript>().isTilted = true;
+        }
 
         Vector3 newScale = new Vector3(xzScale * defaultScale.x, defaultScale.y * UnityEngine.Random.Range(3f, 4.5f), xzScale * defaultScale.x);
         Vector3 newPos = new Vector3(side, seaTop - 1.5f, spawnZ);
@@ -65,7 +72,7 @@ public class FloeSpawnerManager : MonoBehaviour
 
     private void spawnAnotherFloe(Vector3 newPos, Vector3 newScale)
     {
-        int[] zValues = {-15, -10, 10, 15};
+        int[] zValues = { -15, -10, 10, 15 };
         int newZ = UnityEngine.Random.Range(0, 3);
         GameObject ob = Instantiate(spawnList[UnityEngine.Random.Range(0, 3)]) as GameObject;
 
@@ -74,55 +81,30 @@ public class FloeSpawnerManager : MonoBehaviour
         ob.transform.localScale = newScale;
         ob.transform.position = new Vector3(newPos.x * -1f, newPos.y, newPos.z + zValues[newZ]);
     }
-    /* OLD SPAWNFLOE()
-*private void SpawnFloe()
-{
-   GameObject ob = Instantiate(spawnList[Random.Range(0, 3)]) as GameObject;
 
-   float seaSizeY = Sea.GetComponent<Renderer>().bounds.size.y / 2;
-   float seaTop = Sea.transform.position.y + seaSizeY;
-   float height = Random.Range(1, 35);
-   float side = Random.Range(-40, 40);
-   float xzScale = Random.Range(1f, 1.4f);
-   Vector3 defaultScale = ob.transform.localScale;
+    private void SpawnFloeAtLocation(float burstSpawnZ)
+    {
 
+        GameObject ob = Instantiate(spawnList[UnityEngine.Random.Range(0, 3)]) as GameObject;
 
-   //ob.transform.SetParent(transform);
+        Vector3 oldScale = ob.transform.localScale;
 
+        ob.transform.localScale = oldScale + (Vector3.up * oldScale.y * 1.5f);
 
-   //ROTATION
-   //X - sideways, Y - axis (the one you need), Z - same as Y, ignore
-   // 5/10 chance to rotate the floe
-   if (Random.Range(1, 10) >= 6)
-       ob.transform.rotation = Quaternion.Euler(Random.Range(-15, 15), Random.Range(0, 360), 0);
+        ob.transform.position = new Vector3(0, seaTop - 3.5f, burstSpawnZ);
+        spawnZ += floeLength * 2f;
+    }
 
-   //Y AND X POSITIONS
+    private void SpawnFloeBurst()
+    {
+        int count = UnityEngine.Random.Range(3, 7);
 
+        for (int i = 0; i < count; i++)
+        {
+            SpawnFloeAtLocation(spawnZ + ((i * 27) + (i * 2f)));
+        }
 
-   /*
-   float obSizeY = ob.GetComponent<Renderer>().bounds.size.y / 2;
-   float newScaleY = 1f;
+        spawnZ += 30 * (count - 1);
 
-   float heightDifference = (height - obSizeY) - seaTop;
-
-   if (height - obSizeY > seaTop)
-   {
-       newScaleY = heightDifference / obSizeY;
-       if (newScaleY < 1) newScaleY = 1;
-
-       height = (seaTop) - (obSizeY * newScaleY);
-   }
-
-
-Vector3 newPos = new Vector3(side, seaTop - 0.5f, spawnZ);
-Vector3 newScale = new Vector3(xzScale * defaultScale.x, defaultScale.y * Random.Range(3f, 4.5f), xzScale * defaultScale.x);
-
-ob.transform.localScale = newScale;
-
-   //obSizeY = ob.GetComponent<Renderer>().bounds.size.y / 2;
-   //if (height - obSizeY > seaTop) ob.transform.position = new Vector3(side, height + obSizeY, spawnZ);
-   ob.transform.position = newPos;
-
-   spawnZ += floeLength* Random.Range(2f, 3f);
-}*/
+    }
 }

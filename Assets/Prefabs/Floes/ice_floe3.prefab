@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4472003496380677194}
   - component: {fileID: 7868692447178047667}
   - component: {fileID: -4143282715071120201}
+  - component: {fileID: 7212353626776991910}
   m_Layer: 0
   m_Name: ice_floe3
   m_TagString: Untagged
@@ -93,3 +94,17 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.21741, y: 0.31345803, z: 2.1628706}
   m_Center: {x: 0.0044944882, y: -0.143271, z: 0.028705478}
+--- !u!114 &7212353626776991910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8435207035893249135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab09c6df5a657b54392bac17be653e1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScoreObjects:
+  - {fileID: 6065812249458356641, guid: 8442b4e0768b2c94cbe57a31535d6a30, type: 3}

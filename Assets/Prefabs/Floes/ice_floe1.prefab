@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2912516746824525655}
   - component: {fileID: 8887818575487818670}
   - component: {fileID: 4059350245621991558}
+  - component: {fileID: -3302514324411500261}
   m_Layer: 0
   m_Name: ice_floe1
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7163830537881382770}
   m_LocalRotation: {x: 1, y: 0, z: -0, w: 0.0000000754979}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 20, y: 20, z: 15}
   m_Children: []
   m_Father: {fileID: 0}
@@ -93,3 +94,17 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.162089, y: 0.17876072, z: 2}
   m_Center: {x: 0.081044555, y: -0.077768125, z: -1.1051515e-15}
+--- !u!114 &-3302514324411500261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7163830537881382770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab09c6df5a657b54392bac17be653e1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScoreObjects:
+  - {fileID: 6065812249458356641, guid: 8442b4e0768b2c94cbe57a31535d6a30, type: 3}
