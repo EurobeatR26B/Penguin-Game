@@ -92,8 +92,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.162089, y: 0.17876072, z: 2}
-  m_Center: {x: 0.081044555, y: -0.077768125, z: -1.1051515e-15}
+  m_Size: {x: 2.4012296, y: 0.17876072, z: 2.2271369}
+  m_Center: {x: 0.04350538, y: -0.07776813, z: 0.032702513}
 --- !u!114 &-3302514324411500261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,3 +108,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ScoreObjects:
   - {fileID: 6065812249458356641, guid: 8442b4e0768b2c94cbe57a31535d6a30, type: 3}
+  isTilted: 0

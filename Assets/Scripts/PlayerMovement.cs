@@ -7,9 +7,17 @@ public class PlayerMovement : MonoBehaviour
     public int Speed = 2;
     public float MaxJumpVelocity = 3;
     public float FallVelocity = 1.5f;
+    private float FallVelocityStore;
 
     public float JumpVelocity;
-    public float JumpDamp = 0.7f;
+    public float JumpDamp;
+    private float JumpDampStore;
+
+    public float FlyDistanceMax = 100;
+    public float FlyDamp = 2;
+    public float FlyDistanceCurrent;
+
+    public bool grounded;
 
     public float distanceToGround = 0.7f;
     Rigidbody rb;
@@ -18,37 +26,70 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        FlyDistanceCurrent = 0;
+        FallVelocityStore = FallVelocity;
+        JumpDampStore = JumpDamp;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         Move();
+        grounded = isGrounded();
 
-        if (Input.GetKey(KeyCode.Space) && isGrounded()) Jump();
+        if (Input.GetKey(KeyCode.Space) && grounded) Jump();
         if (Input.GetKey(KeyCode.R)) transform.position = new Vector3(0, 20, 0);
 
 
         Vector3 pos = transform.position;
 
-        if (JumpVelocity > 0)
+        #region Jump
+        if (JumpVelocity > 0 || FlyDistanceCurrent < FlyDistanceMax)
         {
-            pos.y += JumpVelocity;
-
-            JumpVelocity -= JumpDamp;
-
-            if(JumpVelocity <= 0)
+            //If there is input and conditions to flap
+            if (Input.GetKey(KeyCode.LeftShift) && FlyDistanceCurrent <= FlyDistanceMax)
             {
-                rb.useGravity = true;
-                JumpVelocity = 0;
+                Fly(ref pos);
+                pos.y += 2.5f;
             }
+            //If no flap, simply jump as usual
+            else
+            {
+                pos.y += JumpVelocity;
+                JumpVelocity -= JumpDamp;
+
+                FallVelocity = 0;
+            }
+
+
+            if (JumpVelocity <= 0f || FlyDistanceCurrent >= FlyDistanceMax)
+            {
+                if (FlyDistanceCurrent <= FlyDistanceMax && Input.GetKey(KeyCode.LeftShift))
+                {
+                    Fly(ref pos);
+                }
+                else
+                {
+                    rb.useGravity = true;
+
+                    JumpVelocity = 0;
+                    FallVelocity = FallVelocityStore;
+                }
+
+            }
+
         }
-        if(!isGrounded())
+        //Fall back down the ground
+        if (!grounded)
         {
             rb.velocity += new Vector3(0, -FallVelocity, 0);
         }
+        else FlyDistanceCurrent = 0;
+
 
         transform.position = pos;
+        #endregion Jump
 
     }
 
@@ -59,11 +100,20 @@ public class PlayerMovement : MonoBehaviour
 
     void Jump()
     {
-        float hAxis = Input.GetAxis("Horizontal");
-        float vAxis = Input.GetAxis("Vertical");
-
         JumpVelocity = MaxJumpVelocity;
         rb.useGravity = false;
+    }
+
+    void Fly(ref Vector3 position)
+    {
+        if (grounded) return;
+        FallVelocity = 0;
+        FlyDistanceCurrent += FlyDamp;
+
+        position.y += 5f;
+
+        JumpVelocity = 0.01f;
+
     }
 
     void Move()
