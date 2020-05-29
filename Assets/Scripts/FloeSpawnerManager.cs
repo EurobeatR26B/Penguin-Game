@@ -10,10 +10,12 @@ public class FloeSpawnerManager : MonoBehaviour
     GameObject Sea;
 
     private Transform playerTransform;
-    private int maxFloes = 4;
+    private int maxFloes = 16;
 
     public float spawnZ = 60f;
     public float floeLength = 50f;
+	private float safeZone = 100f;
+	private List<GameObject> activeFloes;
 
     private float seaSizeY;
     private float seaTop;
@@ -26,6 +28,13 @@ public class FloeSpawnerManager : MonoBehaviour
 
         seaSizeY = Sea.GetComponent<Renderer>().bounds.size.y / 2;
         seaTop = Sea.transform.position.y + seaSizeY;
+		
+		activeFloes = new List<GameObject>();
+
+        SpawnFloeNormal();
+        SpawnFloeNormal();
+        SpawnFloeNormal();
+        SpawnFloeNormal();
     }
 
     // Update is called once per frame
@@ -33,16 +42,20 @@ public class FloeSpawnerManager : MonoBehaviour
     {
         //UnityEngine.Random.seed = Time.frameCount;
         //if (playerTransform.position.z > (spawnZ - (maxFloes * floeLength * 4f))) SpawnFloeBurst();
+        float spawnerPos = (spawnZ - (maxFloes * floeLength));
 
-        if (playerTransform.position.z > (spawnZ - (maxFloes * floeLength * 4f)))
+        if (playerTransform.position.z > spawnerPos)
         {
             int SpawnChoice = UnityEngine.Random.Range(1, 15);
 
             if (SpawnChoice < 2) SpawnFloeStairs();
             else if (SpawnChoice < 5) SpawnFloeBurst();
             else SpawnFloeNormal();
+
         }
 
+
+        DeleteFloe();
     }
 
     private void SpawnFloeNormal()
@@ -68,12 +81,12 @@ public class FloeSpawnerManager : MonoBehaviour
         ob.transform.localScale = newScale;
         ob.transform.position = newPos;
 
-        //if (side < -30 || side > 30) spawnAnotherFloe(newPos, newScale);
+		activeFloes.Add(ob);
 
         spawnZ += floeLength * UnityEngine.Random.Range(2f, 2.5f);
     }
 
-    private void SpawnAnotherFloe(Vector3 newPos, Vector3 newScale)
+    /*private void SpawnAnotherFloe(Vector3 newPos, Vector3 newScale)
     {
         int[] zValues = { -15, -10, 10, 15 };
         int newZ = UnityEngine.Random.Range(0, 3);
@@ -83,20 +96,14 @@ public class FloeSpawnerManager : MonoBehaviour
 
         ob.transform.localScale = newScale;
         ob.transform.position = new Vector3(newPos.x * -1f, newPos.y, newPos.z + zValues[newZ]);
-    }
+    }*/
 
     private void SpawnFloeAtLocation(float locationX, float locationY, float locationZ, GameObject ob)
     {
         Instantiate(ob);
         ob.transform.position = new Vector3(locationX, locationY, locationZ);
-        /*GameObject ob = Instantiate(spawnList[UnityEngine.Random.Range(0, 3)]) as GameObject;
-
-        Vector3 oldScale = ob.transform.localScale;
-
-        ob.transform.localScale = oldScale + (Vector3.up * oldScale.y * 1.5f);
-
-        ob.transform.position = new Vector3(0, seaTop - 3.5f, locationZ);
-        spawnZ += floeLength * 2f;*/
+		
+		activeFloes.Add(ob);
     }
 
     private void SpawnFloeBurst()
@@ -112,8 +119,10 @@ public class FloeSpawnerManager : MonoBehaviour
 
             ob.transform.localScale = oldScale + (Vector3.up * oldScale.y * 1.5f);
 
-            ob.transform.position = new Vector3(0, seaTop - 3.5f, spawnZ + ((i * 27) + (i * 2f)));
+            ob.transform.position = new Vector3(0, seaTop - 3.5f, spawnZ + ((i * 30) + (i * 2f)));
             spawnZ += floeLength * 2f;
+			
+			activeFloes.Add(ob);
         }
 
         spawnZ += 30 * (count - 1);
@@ -121,23 +130,29 @@ public class FloeSpawnerManager : MonoBehaviour
     }
 
     private void SpawnFloeStairs ()
-    {
-        GameObject ob = Instantiate(spawnList[UnityEngine.Random.Range(1, 3)]) as GameObject;
-        
-        Vector3 oldScale = ob.transform.localScale;
-        ob.transform.localScale = new Vector3(oldScale.x, oldScale.y * 15, oldScale.z);
+    {        
+        int count = UnityEngine.Random.Range(3, 7);
 
-        float startingY = seaTop;
-
-
-        int count = UnityEngine.Random.Range(3, 6);
+        //Keep all this in the loop, as otherwise they will not be DeleteFloe()ed
         for (int i = 0; i < count; i++)
         {
+            GameObject ob = Instantiate(spawnList[UnityEngine.Random.Range(1, 3)]) as GameObject;
+
+            Vector3 oldScale = ob.transform.localScale;
+            ob.transform.localScale = new Vector3(oldScale.x, oldScale.y * 15, oldScale.z);
+
             SpawnFloeAtLocation(0, seaTop - 20 + (i * 30), spawnZ + (i * 35), ob);
         }
 
         spawnZ += count * 50f;
-
-
     }
+	
+	private void DeleteFloe()
+	{
+        if (playerTransform.position.z > activeFloes[0].transform.position.z + safeZone)
+        {
+            Destroy(activeFloes[0]);
+            activeFloes.RemoveAt(0);
+        }
+	}
 }

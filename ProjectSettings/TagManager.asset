@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Sea
+  - FlightMeter
   layers:
   - Default
   - TransparentFX

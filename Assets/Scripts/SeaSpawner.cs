@@ -9,9 +9,13 @@ public class SeaSpawner : MonoBehaviour
 
     public int SpawnZ = 150;
     public int SeaSize = 150;
+
+    private List<GameObject> seaList;
     // Start is called before the first frame update
     void Start()
     {
+        seaList = new List<GameObject>();
+
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         Sea = GameObject.FindGameObjectWithTag("Sea");
     }
@@ -31,5 +35,14 @@ public class SeaSpawner : MonoBehaviour
         ob.transform.position = (Vector3.forward * SpawnZ) + (Vector3.up * Sea.transform.position.y);
         SpawnZ += 150;
         Debug.Log("Spawned");
+    }
+
+    void Delete()
+    {
+        if(SpawnZ + 450 > seaList[0].transform.position.z)
+        {
+            Destroy(seaList[0]);
+            seaList.RemoveAt(0);
+        }
     }
 }

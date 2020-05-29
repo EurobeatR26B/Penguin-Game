@@ -20,16 +20,24 @@ public class PlayerMovement : MonoBehaviour
     public bool grounded;
 
     public float distanceToGround = 0.7f;
+    public float currentVelocity;
     Rigidbody rb;
+
+    UnityEngine.UI.Slider flightMeter;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        flightMeter = GameObject.FindGameObjectWithTag("FlightMeter").GetComponent<UnityEngine.UI.Slider>();
+
+
 
         FlyDistanceCurrent = 0;
         FallVelocityStore = FallVelocity;
         JumpDampStore = JumpDamp;
+
+        flightMeter.maxValue = FlyDistanceMax;
     }
 
     // Update is called once per frame
@@ -37,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Move();
         grounded = isGrounded();
+        currentVelocity = rb.velocity.y;
 
         if (Input.GetKey(KeyCode.Space) && grounded) Jump();
         if (Input.GetKey(KeyCode.R)) transform.position = new Vector3(0, 20, 0);
@@ -48,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
         if (JumpVelocity > 0 || FlyDistanceCurrent < FlyDistanceMax)
         {
             //If there is input and conditions to flap
-            if (Input.GetKey(KeyCode.LeftShift) && FlyDistanceCurrent <= FlyDistanceMax)
+            if (Input.GetKey(KeyCode.LeftShift) && FlyDistanceCurrent <= FlyDistanceMax && !grounded)
             {
                 Fly(ref pos);
                 pos.y += 2.5f;
@@ -65,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (JumpVelocity <= 0f || FlyDistanceCurrent >= FlyDistanceMax)
             {
-                if (FlyDistanceCurrent <= FlyDistanceMax && Input.GetKey(KeyCode.LeftShift))
+                if (FlyDistanceCurrent <= FlyDistanceMax && Input.GetKey(KeyCode.LeftShift) && !grounded)
                 {
                     Fly(ref pos);
                 }
@@ -81,11 +90,15 @@ public class PlayerMovement : MonoBehaviour
 
         }
         //Fall back down the ground
-        if (!grounded)
+        if (!grounded && rb.velocity.y >= -130)
         {
             rb.velocity += new Vector3(0, -FallVelocity, 0);
         }
-        else FlyDistanceCurrent = 0;
+        if(grounded)
+        {
+            FlyDistanceCurrent = 0;
+            flightMeter.value = flightMeter.maxValue;
+        }
 
 
         transform.position = pos;
@@ -110,10 +123,10 @@ public class PlayerMovement : MonoBehaviour
         FallVelocity = 0;
         FlyDistanceCurrent += FlyDamp;
 
-        position.y += 5f;
+        rb.velocity += new Vector3(0, 0.8f, 0);
 
         JumpVelocity = 0.01f;
-
+        flightMeter.value = FlyDistanceMax - FlyDistanceCurrent;
     }
 
     void Move()
