@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -3302514324411500261}
   m_Layer: 0
   m_Name: ice_floe1
-  m_TagString: Untagged
+  m_TagString: Floe
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107,5 +107,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ScoreObjects:
-  - {fileID: 6065812249458356641, guid: 8442b4e0768b2c94cbe57a31535d6a30, type: 3}
+  - {fileID: 460375522474733983, guid: 293552fcb6874fc4ea055a648e329f3e, type: 3}
   isTilted: 0

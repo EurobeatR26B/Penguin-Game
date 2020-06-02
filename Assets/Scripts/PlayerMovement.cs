@@ -4,40 +4,47 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public int Speed = 2;
-    public float MaxJumpVelocity = 3;
-    public float FallVelocity = 1.5f;
-    private float FallVelocityStore;
+    GodScript godScript;
+    public DeathMenu death;
 
+    public int Speed;  
+
+    public float MaxJumpVelocity;
     public float JumpVelocity;
-    public float JumpDamp;
+    private float JumpDamp;
     private float JumpDampStore;
 
-    public float FlyDistanceMax = 100;
+    public float FlyDistanceMax;
     public float FlyDamp = 2;
     public float FlyDistanceCurrent;
 
+    public float FallVelocity;
+    private float FallVelocityStore;
+
+    public float BreathMax;
+    public float BreathDamp;
+    public float BreathCurrent;
+
     public bool grounded;
+    public bool isInWater = false;
 
     public float distanceToGround = 0.7f;
-    public float currentVelocity;
     Rigidbody rb;
 
     UnityEngine.UI.Slider flightMeter;
+    UnityEngine.UI.Slider breathMeter;
 
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        godScript = GameObject.FindGameObjectWithTag("God").GetComponent<GodScript>();
         flightMeter = GameObject.FindGameObjectWithTag("FlightMeter").GetComponent<UnityEngine.UI.Slider>();
+        breathMeter = GameObject.FindGameObjectWithTag("BreathMeter").GetComponent<UnityEngine.UI.Slider>();
 
+        rb = GetComponent<Rigidbody>();
+        
 
-
-        FlyDistanceCurrent = 0;
-        FallVelocityStore = FallVelocity;
-        JumpDampStore = JumpDamp;
-
-        flightMeter.maxValue = FlyDistanceMax;
+        LoadStats();
     }
 
     // Update is called once per frame
@@ -45,7 +52,6 @@ public class PlayerMovement : MonoBehaviour
     {
         Move();
         grounded = isGrounded();
-        currentVelocity = rb.velocity.y;
 
         if (Input.GetKey(KeyCode.Space) && grounded) Jump();
         if (Input.GetKey(KeyCode.R)) transform.position = new Vector3(0, 20, 0);
@@ -104,6 +110,40 @@ public class PlayerMovement : MonoBehaviour
         transform.position = pos;
         #endregion Jump
 
+        if(!isInWater)
+        {
+            if (BreathCurrent >= 0)
+            {
+                BreathCurrent -= BreathDamp * 0.5f;
+                breathMeter.value = BreathMax - BreathCurrent;
+            }
+        }
+
+        if (BreathCurrent >= BreathMax) Die();
+
+    }
+
+    void LoadStats()
+    {
+        JumpDamp = 0.13f;
+        FlyDamp = 2;
+        distanceToGround = 2;
+        BreathDamp = 2;
+        FlyDistanceCurrent = 0;
+        BreathCurrent = 0;
+
+        Speed = godScript.Speed;
+        MaxJumpVelocity = godScript.MaxJumpVelocity;
+        FallVelocity = godScript.FallVelocity;
+        FlyDistanceMax = godScript.FlyDistanceMax;
+        BreathMax = godScript.BreathMax;
+
+        FallVelocityStore = FallVelocity;
+        JumpDampStore = JumpDamp;
+
+        flightMeter.maxValue = FlyDistanceMax;
+        breathMeter.maxValue = BreathMax;
+        breathMeter.value = breathMeter.maxValue;
     }
 
     bool isGrounded()
@@ -141,5 +181,65 @@ public class PlayerMovement : MonoBehaviour
 
         //if (isGrounded())
         transform.Translate(movement * Speed * Time.deltaTime, Space.World);
+    }
+
+    void Die()
+    {
+        godScript.Lives--;
+        transform.position = new Vector3(0, godScript.FlagLatestTouchedY, godScript.FlagLatestTouchedZ);
+
+        BreathCurrent = 0;
+        FlyDistanceCurrent = 0;
+
+        if (godScript.Lives == 0)
+        {
+            death.ToggleEndMenu(godScript.Score);
+            Speed = 0;
+            MaxJumpVelocity = 0;
+
+            flightMeter.gameObject.SetActive(false);
+            breathMeter.gameObject.SetActive(false);
+        }
+    }
+
+    private void OnCollisionEnter (Collision hit)
+    {
+        if(hit.collider.gameObject.tag == "Snowflake")
+        {
+            Destroy(hit.gameObject);
+            godScript.Score += 1;
+        }
+
+        if (hit.collider.gameObject.tag == "Floe")
+        {
+            godScript.FloesJumped++;
+        }
+        if (hit.collider.gameObject.tag == "Flag")
+        {
+            godScript.FlagLatestTouchedZ = hit.transform.position.z;
+            godScript.FlagLatestTouchedY = hit.transform.position.y + 10;
+        }
+
+        /*if (hit.collider.gameObject.tag == "Sea")
+        {
+            BreathCurrent += BreathDamp * Time.deltaTime * 1f;
+            breathMeter.value = BreathMax - BreathCurrent;
+        }*/
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if(collision.gameObject.tag == "Sea")
+        {
+            BreathCurrent += BreathDamp;
+            breathMeter.value = BreathMax - BreathCurrent;
+            isInWater = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.tag == "Sea") isInWater = false;
+        
     }
 }

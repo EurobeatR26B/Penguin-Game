@@ -17,6 +17,6 @@ public class CloudScript : MonoBehaviour
     {
         transform.position += Vector3.right * moveSpeed;
 
-        if (transform.position.x >= 200 || transform.position.x <= -200) moveSpeed *= -1;
+        if (transform.position.x >= 155 || transform.position.x <= -155) moveSpeed *= -1;
     }
 }

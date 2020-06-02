@@ -6,6 +6,14 @@ TagManager:
   tags:
   - Sea
   - FlightMeter
+  - God
+  - Snowflake
+  - Floe
+  - BreathMeter
+  - Flag
+  - Fish
+  - SeaSpawnerObject
+  - DeathMenu
   layers:
   - Default
   - TransparentFX

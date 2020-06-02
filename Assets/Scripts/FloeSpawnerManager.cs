@@ -6,8 +6,11 @@ using UnityEngine;
 public class FloeSpawnerManager : MonoBehaviour
 {
     public GameObject[] spawnList;
+    public GameObject objectFlag;
+    public Material flagFloe;
 
     GameObject Sea;
+    GodScript God;
 
     private Transform playerTransform;
     private int maxFloes = 16;
@@ -20,21 +23,35 @@ public class FloeSpawnerManager : MonoBehaviour
     private float seaSizeY;
     private float seaTop;
 
+
+    private List<GameObject> activeFlags;
+    private bool isSpawnFlag = false;
+    private int FloesJumped;
+    private int FlagInterval;
+    private float LastFlagZ;
+
     // Start is called before the first frame update
     void Start()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         Sea = GameObject.FindGameObjectWithTag("Sea");
+        God = GameObject.FindGameObjectWithTag("God").GetComponent<GodScript>();
+
+        FlagInterval = God.FlagSaveInterval;
 
         seaSizeY = Sea.GetComponent<Renderer>().bounds.size.y / 2;
         seaTop = Sea.transform.position.y + seaSizeY;
 		
 		activeFloes = new List<GameObject>();
+        activeFlags = new List<GameObject>();
 
         SpawnFloeNormal();
         SpawnFloeNormal();
         SpawnFloeNormal();
         SpawnFloeNormal();
+
+        LastFlagZ = -100;
+
     }
 
     // Update is called once per frame
@@ -54,6 +71,10 @@ public class FloeSpawnerManager : MonoBehaviour
 
         }
 
+        //Every FLAGINTERVAL floes spawn a save point
+        FloesJumped = God.FloesJumped;                
+        if(FloesJumped != 0 && FloesJumped == FlagInterval) SpawnFlag();
+        
 
         DeleteFloe();
     }
@@ -146,10 +167,32 @@ public class FloeSpawnerManager : MonoBehaviour
 
         spawnZ += count * 50f;
     }
+
+    private void SpawnFlag()
+    {
+        Vector3 pos = activeFloes[activeFloes.Count - 1].transform.position + Vector3.up * 4f;
+        activeFloes[activeFloes.Count - 1].transform.GetComponent<MeshRenderer>().material = flagFloe;
+
+        GameObject flag = Instantiate(objectFlag) as GameObject;
+        flag.transform.position = pos;
+
+        flag.transform.SetParent(activeFloes[activeFloes.Count - 1].transform);
+
+        if (activeFlags.Count < 2) activeFlags.Add(flag);
+        else
+        {
+            activeFlags[0] = activeFlags[1];
+            activeFlags[1] = flag;
+        }
+
+        God.FloesJumped = 0;
+    }
 	
 	private void DeleteFloe()
 	{
-        if (playerTransform.position.z > activeFloes[0].transform.position.z + safeZone)
+        /*float oldFlagZ = activeFlags[0].transform.position.z;
+        float newFlagZ = activeFlags[1].transform.position.z;*/
+        if (LastFlagZ > activeFloes[0].transform.position.z + safeZone || playerTransform.position.z - floeLength * 30 > activeFloes[0].transform.position.z)
         {
             Destroy(activeFloes[0]);
             activeFloes.RemoveAt(0);

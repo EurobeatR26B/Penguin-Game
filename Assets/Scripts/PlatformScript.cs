@@ -22,24 +22,22 @@ public class PlatformScript : MonoBehaviour
     void SpawnSnowflake()
     {
         GameObject flake = Instantiate(ScoreObjects[0]) as GameObject;
-        //flake.transform.SetParent(transform);
+        
 
         Vector3 transformPos = transform.position;
 
         //Calculating how far up the snowflake should be lifted
-        float floeY = transform.GetComponent<Renderer>().bounds.max.y;
-        float yCoef = UnityEngine.Random.Range(2.2f, 3f);
+        float floeY = transform.GetComponent<Renderer>().bounds.size.y;
+        float yCoef = UnityEngine.Random.Range(1f, 1.4f);
 
-        //If the platform is tilted, the Y placement gets all messed up and the only way of bypassing this I could think of
-        //was to just calculate it seperately
-        if(isTilted)
-        {
-            floeY = transform.GetComponent<Renderer>().bounds.center.y;
-            yCoef = UnityEngine.Random.Range(-3f, -3.8f);
-        }
+        if (isTilted) yCoef = 0.8f;
+
+        
 
 
-        flake.transform.position = transformPos + (Vector3.up * floeY * yCoef);
-        flake.transform.rotation = new Quaternion(0, 0, 0, 0);
+        flake.transform.position = transformPos + (Vector3.up * floeY * yCoef);//(Vector3.up * floeY * yCoef);
+
+        flake.transform.SetParent(transform);
+        //flake.transform.rotation = new Quaternion(0, 0, 0, 0);
     }
 }

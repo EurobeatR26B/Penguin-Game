@@ -37,7 +37,7 @@ public class CloudSpawner : MonoBehaviour
         float posZ = UnityEngine.Random.Range(spawnZ, spawnZ + 30);
         float posY = UnityEngine.Random.Range(100f, 140f);
 
-        cloud.transform.position = new Vector3(-200, posY, posZ);
+        cloud.transform.position = new Vector3(-155, posY, posZ);
 
 
         activeClouds.Add(cloud);
