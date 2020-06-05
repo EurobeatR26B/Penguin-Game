@@ -14,6 +14,34 @@ TagManager:
   - Fish
   - SeaSpawnerObject
   - DeathMenu
+  - Fly1
+  - Fly2
+  - Fly3
+  - Jump1
+  - Jump2
+  - Jump3
+  - Swim1
+  - Swim2
+  - Swim3
+  - CurrentMoney
+  - TotalSpent
+  - Level
+  - FlagText
+  - HeartText
+  - Canvas
+  - ScoreText
+  - buttonItem1
+  - buttonItem2
+  - buttonItem3
+  - itemLabel1
+  - itemLabel2
+  - buttonLeft
+  - buttonRight
+  - ShopPenguin
+  - labelMoney
+  - buttonMusic
+  - buttonSFX
+  - AudioSpawner
   layers:
   - Default
   - TransparentFX

@@ -10,7 +10,6 @@ public class FloeSpawnerManager : MonoBehaviour
     public Material flagFloe;
 
     GameObject Sea;
-    GodScript God;
 
     private Transform playerTransform;
     private int maxFloes = 16;
@@ -34,10 +33,9 @@ public class FloeSpawnerManager : MonoBehaviour
     void Start()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        Sea = GameObject.FindGameObjectWithTag("Sea");
-        God = GameObject.FindGameObjectWithTag("God").GetComponent<GodScript>();
+        Sea = GameObject.FindGameObjectWithTag("Sea");        
 
-        FlagInterval = God.FlagSaveInterval;
+        FlagInterval = GodScript.FlagSaveInterval;
 
         seaSizeY = Sea.GetComponent<Renderer>().bounds.size.y / 2;
         seaTop = Sea.transform.position.y + seaSizeY;
@@ -72,7 +70,7 @@ public class FloeSpawnerManager : MonoBehaviour
         }
 
         //Every FLAGINTERVAL floes spawn a save point
-        FloesJumped = God.FloesJumped;                
+        FloesJumped = GodScript.FloesJumped;                
         if(FloesJumped != 0 && FloesJumped == FlagInterval) SpawnFlag();
         
 
@@ -107,17 +105,7 @@ public class FloeSpawnerManager : MonoBehaviour
         spawnZ += floeLength * UnityEngine.Random.Range(2f, 2.5f);
     }
 
-    /*private void SpawnAnotherFloe(Vector3 newPos, Vector3 newScale)
-    {
-        int[] zValues = { -15, -10, 10, 15 };
-        int newZ = UnityEngine.Random.Range(0, 3);
-        GameObject ob = Instantiate(spawnList[UnityEngine.Random.Range(0, 3)]) as GameObject;
-
-
-
-        ob.transform.localScale = newScale;
-        ob.transform.position = new Vector3(newPos.x * -1f, newPos.y, newPos.z + zValues[newZ]);
-    }*/
+    
 
     private void SpawnFloeAtLocation(float locationX, float locationY, float locationZ, GameObject ob)
     {
@@ -185,7 +173,7 @@ public class FloeSpawnerManager : MonoBehaviour
             activeFlags[1] = flag;
         }
 
-        God.FloesJumped = 0;
+        GodScript.FloesJumped = 0;
     }
 	
 	private void DeleteFloe()

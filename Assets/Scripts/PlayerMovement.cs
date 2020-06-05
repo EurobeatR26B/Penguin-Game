@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    GodScript godScript;
     public DeathMenu death;
+    private AudioSpawnerManager AudioSpawner;
+    private UnityEngine.UI.Text ScoreText;
+
+    public GameObject life;
+    public DeathMenu deathMenu;
 
     public int Speed;  
 
@@ -27,17 +31,21 @@ public class PlayerMovement : MonoBehaviour
 
     public bool grounded;
     public bool isInWater = false;
+    public bool FlySpeedUpgrade = false;
+    public bool FlyGroundUpgrade = false;
+
+    public int ScoreMultiplier;
 
     public float distanceToGround = 0.7f;
     Rigidbody rb;
 
-    UnityEngine.UI.Slider flightMeter;
-    UnityEngine.UI.Slider breathMeter;
+    public static UnityEngine.UI.Slider flightMeter;
+    public static UnityEngine.UI.Slider breathMeter;
 
     // Start is called before the first frame update
     void Start()
     {
-        godScript = GameObject.FindGameObjectWithTag("God").GetComponent<GodScript>();
+        GodScript.SpawnLives(life);
         flightMeter = GameObject.FindGameObjectWithTag("FlightMeter").GetComponent<UnityEngine.UI.Slider>();
         breathMeter = GameObject.FindGameObjectWithTag("BreathMeter").GetComponent<UnityEngine.UI.Slider>();
 
@@ -63,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
         if (JumpVelocity > 0 || FlyDistanceCurrent < FlyDistanceMax)
         {
             //If there is input and conditions to flap
-            if (Input.GetKey(KeyCode.LeftShift) && FlyDistanceCurrent <= FlyDistanceMax && !grounded)
+            if (Input.GetKey(KeyCode.LeftShift) && FlyDistanceCurrent <= FlyDistanceMax && (!grounded || FlyGroundUpgrade))
             {
                 Fly(ref pos);
                 pos.y += 2.5f;
@@ -75,12 +83,13 @@ public class PlayerMovement : MonoBehaviour
                 JumpVelocity -= JumpDamp;
 
                 FallVelocity = 0;
+                Speed = GodScript.Speed;
             }
 
 
             if (JumpVelocity <= 0f || FlyDistanceCurrent >= FlyDistanceMax)
             {
-                if (FlyDistanceCurrent <= FlyDistanceMax && Input.GetKey(KeyCode.LeftShift) && !grounded)
+                if (FlyDistanceCurrent <= FlyDistanceMax && Input.GetKey(KeyCode.LeftShift) && (!grounded || FlyGroundUpgrade))
                 {
                     Fly(ref pos);
                 }
@@ -90,6 +99,7 @@ public class PlayerMovement : MonoBehaviour
 
                     JumpVelocity = 0;
                     FallVelocity = FallVelocityStore;
+                    Speed = GodScript.Speed;
                 }
 
             }
@@ -127,23 +137,43 @@ public class PlayerMovement : MonoBehaviour
     {
         JumpDamp = 0.13f;
         FlyDamp = 2;
-        distanceToGround = 2;
         BreathDamp = 2;
+        
         FlyDistanceCurrent = 0;
         BreathCurrent = 0;
 
-        Speed = godScript.Speed;
-        MaxJumpVelocity = godScript.MaxJumpVelocity;
-        FallVelocity = godScript.FallVelocity;
-        FlyDistanceMax = godScript.FlyDistanceMax;
-        BreathMax = godScript.BreathMax;
+        Speed = GodScript.Speed;
+        MaxJumpVelocity = GodScript.MaxJumpVelocity;
+        FlyDistanceMax = GodScript.FlyDistanceMax;
+        BreathMax = GodScript.BreathMax;
+        FallVelocity = GodScript.FallVelocity;        
+        
+        distanceToGround = 2;
 
         FallVelocityStore = FallVelocity;
         JumpDampStore = JumpDamp;
 
+        ScoreMultiplier = GodScript.ScoreMultiplier;
         flightMeter.maxValue = FlyDistanceMax;
         breathMeter.maxValue = BreathMax;
         breathMeter.value = breathMeter.maxValue;
+
+        FlySpeedUpgrade = GodScript.FlySpeedUpgrade;
+        FlyGroundUpgrade = GodScript.FlyGroundUpgrade;
+
+        if (GodScript.Hat != null) LoadClothing(GodScript.Hat);
+        if (GodScript.Glasses != null) LoadClothing(GodScript.Glasses);
+
+        ScoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<UnityEngine.UI.Text>();
+        AudioSpawner = GameObject.FindGameObjectWithTag("AudioSpawner").GetComponent<AudioSpawnerManager>();
+    }
+
+    void LoadClothing(string objectName)
+    {
+        foreach(Transform t in transform)
+        {
+            if (t.name == objectName) t.gameObject.SetActive(true);
+        }
     }
 
     bool isGrounded()
@@ -160,8 +190,10 @@ public class PlayerMovement : MonoBehaviour
     void Fly(ref Vector3 position)
     {
         if (grounded) return;
+        if (FlySpeedUpgrade) Speed = GodScript.Speed * 2;
+
         FallVelocity = 0;
-        FlyDistanceCurrent += FlyDamp;
+        FlyDistanceCurrent += GodScript.FlySeconds * Time.deltaTime;
 
         rb.velocity += new Vector3(0, 0.8f, 0);
 
@@ -185,21 +217,10 @@ public class PlayerMovement : MonoBehaviour
 
     void Die()
     {
-        godScript.Lives--;
-        transform.position = new Vector3(0, godScript.FlagLatestTouchedY, godScript.FlagLatestTouchedZ);
+        GodScript.OnPlayerDeath(deathMenu);
+        transform.position = new Vector3(0, GodScript.FlagLatestTouchedY, GodScript.FlagLatestTouchedZ);
 
-        BreathCurrent = 0;
-        FlyDistanceCurrent = 0;
-
-        if (godScript.Lives == 0)
-        {
-            death.ToggleEndMenu(godScript.Score);
-            Speed = 0;
-            MaxJumpVelocity = 0;
-
-            flightMeter.gameObject.SetActive(false);
-            breathMeter.gameObject.SetActive(false);
-        }
+        LoadStats();
     }
 
     private void OnCollisionEnter (Collision hit)
@@ -207,39 +228,74 @@ public class PlayerMovement : MonoBehaviour
         if(hit.collider.gameObject.tag == "Snowflake")
         {
             Destroy(hit.gameObject);
-            godScript.Score += 1;
+
+            if(hit.gameObject.name == "The Special Flake") GodScript.CurrentScore += 10 * ScoreMultiplier;
+            else GodScript.CurrentScore += 1 * ScoreMultiplier;
+
+            ScoreText.text = GodScript.CurrentScore.ToString();
+            AudioSpawner.PlayPoints();
         }
+
+        if (hit.collider.gameObject.tag == "Fish")
+        {
+            Destroy(hit.gameObject);
+            GodScript.CurrentScore += 2 * ScoreMultiplier;
+
+            ScoreText.text = GodScript.CurrentScore.ToString();
+
+            AudioSpawner.PlayFishPoints();
+        }
+
+
 
         if (hit.collider.gameObject.tag == "Floe")
         {
-            godScript.FloesJumped++;
+            GodScript.FloesJumped++;
         }
         if (hit.collider.gameObject.tag == "Flag")
         {
-            godScript.FlagLatestTouchedZ = hit.transform.position.z;
-            godScript.FlagLatestTouchedY = hit.transform.position.y + 10;
+            GodScript.FlagLatestTouchedZ = hit.transform.position.z;
+            GodScript.FlagLatestTouchedY = hit.transform.position.y + 10;
+
+            AudioSpawner.PlayFlag();
+        }
+        if (hit.gameObject.tag == "Sea")
+        {
+            AudioSpawner.PlaySplash();
+            AudioSpawner.StartUnderwater();
         }
 
-        /*if (hit.collider.gameObject.tag == "Sea")
-        {
-            BreathCurrent += BreathDamp * Time.deltaTime * 1f;
-            breathMeter.value = BreathMax - BreathCurrent;
-        }*/
-    }
+            /*if (hit.collider.gameObject.tag == "Sea")
+            {
+                BreathCurrent += BreathDamp * Time.deltaTime * 1f;
+                breathMeter.value = BreathMax - BreathCurrent;
+            }*/
+        }
 
     private void OnCollisionStay(Collision collision)
     {
         if(collision.gameObject.tag == "Sea")
         {
-            BreathCurrent += BreathDamp;
+            BreathCurrent += Time.deltaTime * GodScript.WaterSeconds;
             breathMeter.value = BreathMax - BreathCurrent;
+
+            Speed = GodScript.WaterSpeed;
             isInWater = true;
+
+            if (GodScript.WaterScoreUpgrade) ScoreMultiplier *= 2;
+
         }
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.tag == "Sea") isInWater = false;
+        if (collision.gameObject.tag == "Sea")
+        {
+            AudioSpawner.PauseUnderwater();
+            isInWater = false;
+            Speed = GodScript.Speed;
+            ScoreMultiplier = GodScript.ScoreMultiplier;
+        }
         
     }
 }

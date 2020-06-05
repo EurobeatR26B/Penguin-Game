@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SeaSpawner : MonoBehaviour
 {
-    public GameObject Sea;
+    public GameObject Sea; //-52 -52 -52 -52
     private Transform playerTransform;
 
     public float SpawnZ;
@@ -55,10 +55,6 @@ public class SeaSpawner : MonoBehaviour
 
     public float GetLastSeaZ()
     {
-        /*if (seaList.Count == 1) return seaList[0].transform.position.z;
-        else if (seaList.Count == 0) return 0;
-        return seaList[seaList.Count - 1].transform.position.z;*/
-
         return SpawnZ / 1.4f - SeaSize;
     }
 

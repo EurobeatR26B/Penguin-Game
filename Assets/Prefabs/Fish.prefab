@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2722824466218491860}
   - component: {fileID: 8572007081928418093}
   - component: {fileID: -3145687066781947492}
+  - component: {fileID: 2093414142344827588}
   m_Layer: 0
   m_Name: Fish
   m_TagString: Fish
@@ -97,3 +98,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lerpSpeed: 0
+  VectorSame: 0
+  started: 0
+--- !u!65 &2093414142344827588
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7982970135850506225}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.570176, y: 1.9320366, z: 0.74459386}
+  m_Center: {x: 0.21768665, y: 1.0223203, z: 0.028789967}

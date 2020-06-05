@@ -10,9 +10,12 @@ public class DeathMenu : MonoBehaviour
     public Image deathBackground;
     private bool isShown = false;
     private float transition;
+
+    private int lifeStore;
     // Start is called before the first frame update
     void Start()
     {
+        lifeStore = GodScript.Lives;
         transition = 0f;
         gameObject.SetActive(false);
     }
@@ -28,19 +31,23 @@ public class DeathMenu : MonoBehaviour
 
     public void ToggleEndMenu(int score)
     {
-        Debug.Log("TOGGLING");
         gameObject.SetActive(true);        
         isShown = true;
+        
         //endScore.text = score.ToString();
     }
 
     public void ToMenu()
     {
+        GodScript.TotalScore += GodScript.CurrentScore;
+        GodScript.CurrentScore = 0;
+        //GodScript.SaveData();
         SceneManager.LoadScene("Menu");
     }
 
     public void Restart()
     {
+        GodScript.Lives = lifeStore;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
